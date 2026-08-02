@@ -1,4 +1,4 @@
-import { model, Schema } from 'mongoose'
+import { model, Schema } from 'mongoose';
 
 export interface IProduct {
   title : string,
@@ -17,28 +17,28 @@ const productSchema = new Schema<IProduct>({
     required: [true, 'Поле "title" должно быть заполнено'],
     minlength: [2, 'Минимальная длина поля "title" - 2'],
     maxlength: [30, 'Максимальная длина поля "title" - 30'],
-    unique: true
+    unique: true,
   },
   image: {
     type: {
       fileName: String,
-      originalName: String
+      originalName: String,
     },
-    required: [true, 'Поле "image" должно быть заполнено']
+    required: [true, 'Поле "image" должно быть заполнено'],
   },
   category: {
     type: String,
-    required: [true, 'Поле "category" должно быть заполнено']
+    required: [true, 'Поле "category" должно быть заполнено'],
   },
   description: {
     type: String,
-    required: false
+    required: false,
   },
   price: {
     type: Number,
     required: false,
-    default: null
-  }
+    default: null,
+  },
 });
 
 export default model<IProduct>('product', productSchema);

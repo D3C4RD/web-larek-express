@@ -1,11 +1,11 @@
-import mongoose from "mongoose";
-import {faker} from '@faker-js/faker';
-import { NextFunction, Request, Response } from "express";
+import mongoose from 'mongoose';
+import { faker } from '@faker-js/faker';
+import { NextFunction, Request, Response } from 'express';
 import { celebrate, Joi, Segments } from 'celebrate';
 
 import Product from '../models/product';
-import BadRequestError from "../errors/bad-request-error";
-import ServerError from "../errors/server-error";
+import BadRequestError from '../errors/bad-request-error';
+import ServerError from '../errors/server-error';
 
 interface IOrder {
   payment: 'card' | 'online';
@@ -34,11 +34,11 @@ export const orderRouteValidator = celebrate({
 export const createOrder = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { error, value } = orderSchema.validate(req.body as IOrder);
-    if(error) {
+    if (error) {
       return next(new BadRequestError(`validation error: ${error.message}`));
     }
 
@@ -47,33 +47,33 @@ export const createOrder = async (
         _id: {
           $in: value.items.map(
             (item: string) => new mongoose.Types.ObjectId(item),
-          )
-        }
+          ),
+        },
       })
-    ).filter((product)=> !!product.price);
+    ).filter((product) => !!product.price);
 
     if (products.length !== value.items.length) {
       return next(
         new BadRequestError(
-          'Product data error: Not all products are available'
-        )
-      )
+          'Product data error: Not all products are available',
+        ),
+      );
     }
 
-    const sum = products.reduce((sum, curr) => sum + curr.price, 0);
-    if (value.total !== sum) {
+    const productSum = products.reduce((sum, curr) => sum + curr.price, 0);
+    if (value.total !== productSum) {
       return next(
         new BadRequestError(
           'Order data error: Order total is not equal products price DB sum',
-        )
-      )
+        ),
+      );
     }
 
     return res.status(200).send({
       id: faker.number.hex({ min: 1000000000, max: 100000000000000000000 }),
-      total: sum,
-    })
+      total: productSum,
+    });
   } catch (error) {
     return next(new ServerError(`Server error: ${JSON.stringify(error)}`));
   }
-}
+};

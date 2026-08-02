@@ -1,8 +1,8 @@
-import { Router } from "express";
+import { Router } from 'express';
 import {
   createProduct,
   getProducts,
-  productRouteValidator
+  productRouteValidator,
 } from '../controllers/product';
 
 const router = Router();

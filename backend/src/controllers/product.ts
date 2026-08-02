@@ -1,15 +1,15 @@
 import { NextFunction, Request, Response } from 'express';
-import Product, {IProduct} from '../models/product';
 import { celebrate, Joi, Segments } from 'celebrate';
+import Product, { IProduct } from '../models/product';
 import ConflictError from '../errors/conflict-error';
 import BadRequestError from '../errors/bad-request-error';
 import ServerError from '../errors/server-error';
 
-export const getProducts = ( req: Request, res: Response, next: NextFunction ) => {
+export const getProducts = (_req: Request, res: Response, next: NextFunction) => {
   Product.find({})
-    .then((products) => res.send({ items: products, total: products.length}))
-    .catch((error) => next(error.message)) 
-}
+    .then((products) => res.send({ items: products, total: products.length }))
+    .catch((error) => next(error.message));
+};
 
 export const productSchema = Joi.object<IProduct>({
   title: Joi.string().min(2).max(30).required(),
@@ -23,22 +23,22 @@ export const productRouteValidator = celebrate({
   [Segments.BODY]: productSchema,
 });
 
-export const createProduct = ( req: Request, res: Response, next: NextFunction ) => {
+export const createProduct = (req: Request, res: Response, next: NextFunction) => {
   const {
     title,
     image,
     category,
     description,
-    price
+    price,
   } = req.body;
   return Product.create({
     title,
     image,
     category,
     description,
-    price
+    price,
   })
-    .then((product) => res.send({data: product}))
+    .then((product) => res.send({ data: product }))
     .catch((error) => {
       if (error instanceof Error && error.message.includes('E11000')) {
         return next(new ConflictError(error.message));
@@ -49,5 +49,5 @@ export const createProduct = ( req: Request, res: Response, next: NextFunction )
       }
 
       return next(new ServerError(`Server error: ${JSON.stringify(error)}`));
-    })
-}
+    });
+};
