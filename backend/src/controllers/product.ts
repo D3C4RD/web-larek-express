@@ -38,7 +38,7 @@ export const createProduct = (req: Request, res: Response, next: NextFunction) =
     description,
     price,
   })
-    .then((product) => res.send({ data: product }))
+    .then((product) => res.status(201).send({ data: product }))
     .catch((error) => {
       if (error instanceof Error && error.message.includes('E11000')) {
         return next(new ConflictError(error.message));
