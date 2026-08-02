@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 import routers from './routes';
 import { errors as celebrateErrors } from 'celebrate';
 import { requestLogger, errorLogger } from '../src/middlewares/logger';
+import errorHandler from './middlewares/error-handler';
 
 dotenv.config();
 const { PORT = 3000, DB_ADDRESS = 'mongodb://localhost:27017/weblarek' } = process.env;
@@ -21,6 +22,7 @@ app.use(requestLogger);
 app.use('/', routers);
 app.use(celebrateErrors());
 app.use(errorLogger);
+app.use(errorHandler);
 
 app.listen(PORT, ()=>{
   console.log(`listening on port ${PORT}`)
